@@ -24,6 +24,6 @@ export const typeDefs = gql`
     user_id: ID!
     media_id: ID!
     review: String!
-    rating: Number!
+    rating: Int!
   }
 `

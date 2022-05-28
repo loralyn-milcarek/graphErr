@@ -7,7 +7,7 @@ export const resolvers = {
     hello: () => `Hello World!`, 
     allMedia: () => mediaController.pullAllMedia(),
     allUsers: () => userController.pullAllUsers(),
-    allReviews: () => reviewController.pullAllReviews()
+    // allReviews: () => reviewController.pullAllReviews()
   }, 
   // Mutation: {
   //   insertPosition: (_: any, args: any ) => console.log(args)
