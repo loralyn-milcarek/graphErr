@@ -77,7 +77,7 @@ export async function applyGraphQL<T>({
     },
     {
       standardError: `Cannot query field \"cat\" on type \"Media\".`,
-      statusCode: 500,
+      statusCode: 400,
       extensionsMessage: "there's no field called cat",
       specSection: "2. Language",
       url: "https://spec.graphql.org/draft/#sec-Language"
@@ -86,12 +86,15 @@ export async function applyGraphQL<T>({
 
   type Output = {
     standardError?: string,
-      statusCode?: number,
-      extensionsMessage?: string,
-      specSection?: string,
-      url?: string
+    statusCode?: number,
+    extensionsMessage?: string,
+    specSection?: string,
+    url?: string
   }
-  const errorHandler = (resBody: any) : object => {
+
+  type OutputArray = Output[]
+
+  const errorHandler = (resBody: any) : Output[] => {
   // option 2: invoke func that looks up the error in our library
   // set each additional response property within function
   // return results in an array
@@ -99,13 +102,16 @@ export async function applyGraphQL<T>({
   //
 
     // iterate over resBody.errors (after getting it working with first element)
-    let output: Output = {};
-    for (let i = 0; i < graphErrLibrary.length; i++) {
-      if (graphErrLibrary[i].standardError === resBody.errors[0].message) {
-        // possibly change later to return here instead to make more performant
-        output = graphErrLibrary[i];
+    const output: OutputArray = [];
+    for (let j = 0; j < resBody.errors.length; j++) {
+      for (let i = 0; i < graphErrLibrary.length; i++) {
+        if (graphErrLibrary[i].standardError === resBody.errors[j].message) {
+          // possibly change later to return here instead to make more performant
+          output.push(graphErrLibrary[i]);
+        }
       }
     }
+    // console.log(output);
     return output;
   }
 
@@ -130,21 +136,22 @@ export async function applyGraphQL<T>({
           // need to invoke function here (after 'const result...)
           // return next()
           response.body = result;
-          
-          // console.log(response.status);
-          // console.log(1, response);
 
           if (response.body.errors) {
-            // response.status = 500;
 
             // // option 1: invoke three separate functions that each set their own property
             // response.status = setError(response); // -> 400
             // response.extensions = setExt(res); // -> "this is what the error is"
             // response.spec = setSpec(); // -> "Section 6.1"
-
-            const graphErrObj : Output = errorHandler(response.body);
-            response.body.errors[0].extensionsMessage = graphErrObj.extensionsMessage;
-            response.status = graphErrObj.statusCode;
+            
+            const graphErrObj: OutputArray = errorHandler(response.body);
+            for (let i = 0; i < response.body.errors.length; i++) {
+              // console.log(graphErrObj.extensionsMessage[i]);
+              response.body.errors[i].extensionsMessage = graphErrObj[i].extensionsMessage;
+              response.body.errors[i].status = graphErrObj[i].statusCode;
+            }
+            // console.log(response.body.errors);
+            
             // spec??
 
             // response.body.errors[0].message = "error occured";
@@ -154,16 +161,6 @@ export async function applyGraphQL<T>({
             // console.log(2, response);
           }
           
-          // we might want to change status code for "errors" that don't throw an error
-          // console.log(response.body.errors);
-          // response.body.errors[0].dog = "cat";
-          // console.log('**** CONTEXT *****', ctx);
-
-          // console.log("test", response.body.dog);
-          // response.errors.message = "Hello!!!";
-          // console.log("test", response.error.message);
-          //response.body.errors[0].message = "hello!!!!!!!";
-          // console.log(response.body.errors[0].message);
           return;
         } catch (error) {
           // console.log('line 105 error', error);

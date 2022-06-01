@@ -152,21 +152,21 @@ Context {
   url: "http://localhost:3000/graphql"
 },
   response: Response {
-  body: {
-    errors: [
-      GraphQLError: Cannot query field "cat" on type "Media".
-    at Object.Field (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/common/specifiedRules-d222182c.js:179:31)
-    at Object.enter (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/language/visitor.js:185:29)
-    at Object.enter (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/utilities/TypeInfo.js:250:25)
-    at visit (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/language/visitor.js:126:26)
-    at validate2 (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/validation/validate.js:57:5)
-    at graphqlImpl (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql.js:126:26)
-    at https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql.js:82:74
-    at new Promise (<anonymous>)
-    at graphql (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql.js:81:10)
-    at file:///Users/loralynmilcarek/Desktop/graphErr/deno-graphQL-postgresQL/applyGQL.ts:84:33
-    ]
-  },
+    body: {
+      errors: [
+        GraphQLError: Cannot query field "cat" on type "Media".
+      at Object.Field (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/common/specifiedRules-d222182c.js:179:31)
+      at Object.enter (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/language/visitor.js:185:29)
+      at Object.enter (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/utilities/TypeInfo.js:250:25)
+      at visit (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/language/visitor.js:126:26)
+      at validate2 (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql/validation/validate.js:57:5)
+      at graphqlImpl (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql.js:126:26)
+      at https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql.js:82:74
+      at new Promise (<anonymous>)
+      at graphql (https://cdn.skypack.dev/-/graphql@v15.6.1-zJ05ZndDOqLwqVRA9Igl/dist=es2019,mode=imports/optimized/graphql.js:81:10)
+      at file:///Users/loralynmilcarek/Desktop/graphErr/deno-graphQL-postgresQL/applyGQL.ts:84:33
+      ]
+    },
   headers: Headers {},
   status: 200,
   type: undefined,
