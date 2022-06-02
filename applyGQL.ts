@@ -1,8 +1,10 @@
-// deno-lint-ignore-file
+// deno-lint-ignore-file no-explicit-any
+// maybe go through the file and clean up TypeScript any types
 import { gql, graphql } from "https://deno.land/x/oak_graphql@0.6.3/deps.ts";
 import { ISettings, renderPlaygroundPage} from "https://deno.land/x/oak_graphql@0.6.3/graphql-playground-html/render-playground-html.ts";
 import { makeExecutableSchema } from "https://deno.land/x/oak_graphql@0.6.3/graphql-tools/schema/makeExecutableSchema.ts";
-import {fileUploadMiddleware, GraphQLUpload } from "https://deno.land/x/oak_graphql@0.6.3/fileUpload.ts";
+import { fileUploadMiddleware, GraphQLUpload } from "https://deno.land/x/oak_graphql@0.6.3/fileUpload.ts";
+import { graphErrLibrary } from "./errorLibrary.ts";
 
 interface Constructable<T> {
   new(...args: any): T & OakRouter;
@@ -63,27 +65,6 @@ export async function applyGraphQL<T>({
     resolvers: [resolvers],
   });
 
-  // const newMiddleWare = (ctx: any, next: any) => {
-  //   // console.log("this is the new middleware function");
-  //   return next();
-  // };
-  const graphErrLibrary = [
-    {
-      standardError: `Cannot query field \"dog\" on type \"Media\".`,
-      statusCode: 500,
-      extensionsMessage: "there's no field called dog",
-      specSection: "2. Language",
-      url: "https://spec.graphql.org/draft/#sec-Language"
-    },
-    {
-      standardError: `Cannot query field \"cat\" on type \"Media\".`,
-      statusCode: 400,
-      extensionsMessage: "there's no field called cat",
-      specSection: "2. Language",
-      url: "https://spec.graphql.org/draft/#sec-Language"
-    }
-  ];
-
   type Output = {
     standardError?: string,
     statusCode?: number,
@@ -95,13 +76,6 @@ export async function applyGraphQL<T>({
   type OutputArray = Output[]
 
   const errorHandler = (resBody: any) : Output[] => {
-  // option 2: invoke func that looks up the error in our library
-  // set each additional response property within function
-  // return results in an array
-  // [status, extensions, spec]
-  //
-
-    // iterate over resBody.errors (after getting it working with first element)
     const output: OutputArray = [];
     for (let j = 0; j < resBody.errors.length; j++) {
       for (let i = 0; i < graphErrLibrary.length; i++) {
@@ -111,7 +85,6 @@ export async function applyGraphQL<T>({
         }
       }
     }
-    // console.log(output);
     return output;
   }
 
@@ -119,10 +92,7 @@ export async function applyGraphQL<T>({
       const { response, request } = ctx;
       if (request.hasBody) {
         try {
-          // console.log(context);
           const contextResult = context ? await context(ctx) : undefined;
-          // console.log(contextResult);
-          // console.log("context result is:", contextResult);
           const body = ctx.params.operations || await request.body().value;
           const result = await (graphql as any)(
             schema,
@@ -132,39 +102,21 @@ export async function applyGraphQL<T>({
             body.variables || undefined,
             body.operationName || undefined,
           );
-          console.log(result.schema);
-          // need to invoke function here (after 'const result...)
-          // return next()
+          
           response.body = result;
 
           if (response.body.errors) {
-
-            // // option 1: invoke three separate functions that each set their own property
-            // response.status = setError(response); // -> 400
-            // response.extensions = setExt(res); // -> "this is what the error is"
-            // response.spec = setSpec(); // -> "Section 6.1"
-            
             const graphErrObj: OutputArray = errorHandler(response.body);
             for (let i = 0; i < response.body.errors.length; i++) {
-              // console.log(graphErrObj.extensionsMessage[i]);
               response.body.errors[i].extensionsMessage = graphErrObj[i].extensionsMessage;
+              // We're not actually changing status behind the scenes
               response.body.errors[i].status = graphErrObj[i].statusCode;
             }
-            // console.log(response.body.errors);
-            
-            // spec??
-
-            // response.body.errors[0].message = "error occured";
-            // response.body.errors.forEach((el: any) => console.log(el.message));
           } else {
             response.status = 200;
-            // console.log(2, response);
           }
-          
           return;
         } catch (error) {
-          // console.log('line 105 error', error);
-
           response.status = 200;
           response.body = {
             data: null,
@@ -178,10 +130,9 @@ export async function applyGraphQL<T>({
         }
       }
     }, 
-    (ctx: any, req: any, res: any) => console.log('we did it, avi')
   );
 
-  await router.get(path, async (ctx: any) => {
+  await router.get(path, (ctx: any) => {
     console.log(extensions);
     const { request, response } = ctx;
     if (usePlayground) {
@@ -202,53 +153,6 @@ export async function applyGraphQL<T>({
       }
     }
   });
-
-  // await router.get("/", async (ctx) => {
-  //   const { request, response } = ctx;
-  //   const WS = new SubscriptionServer(
-  //     {
-  //       schema,
-  //       execute: execute as any,
-  //       subscribe,
-  //       onConnect: onConnect
-  //         ? onConnect
-  //         : (connectionParams: Object) => ({ ...connectionParams }),
-  //       onDisconnect: onDisconnect,
-  //       onOperation: async (
-  //         message: { payload: any },
-  //         connection: any,
-  //       ) => {
-  //         connection.formatResponse = (value: any) => value;
-
-  //         // connection.formatError = this.requestOptions.formatError;
-  //         let contextResult;
-  //         try {
-  //           contextResult = context ? await context(ctx) : undefined;
-  //         } catch (error) {
-  //           response.status = 200;
-  //           response.body = {
-  //             data: null,
-  //             errors: [{
-  //               message: error.message ? error.message : error,
-  //             }],
-  //           }
-  //         }
-
-  //         return { ...connection, context: contextResult };
-  //       },
-  //       keepAlive: undefined,
-  //       validationRules: undefined
-  //     },
-  //   );
-  // })
-
-  // await router.get("/", async (ctx) => {
-  //   if (ctx.isUpgradable) {
-  //     const socket = await ctx.upgrade();
-  //     socket.send("graphql-ws")
-  //     await chat(socket)
-  //   }
-  // })
 
   return router;
 }
