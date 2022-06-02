@@ -104,7 +104,7 @@ export async function applyGraphQL<T>({
           );
           
           response.body = result;
-
+ 
           if (response.body.errors) {
             const graphErrObj: OutputArray = errorHandler(response.body);
             for (let i = 0; i < response.body.errors.length; i++) {
@@ -113,6 +113,10 @@ export async function applyGraphQL<T>({
               response.body.errors[i].status = graphErrObj[i].statusCode;
             }
           } else {
+            const arrayTest: any = Object.entries(response.body.data)[0][1];
+            if (arrayTest.length === 0) {
+              response.body.data.graphErr = "Please add a valid argument to your query. Making the arguments in your schema non-nullable may help prevent this issue.";
+            }
             response.status = 200;
           }
           return;
