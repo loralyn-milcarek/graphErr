@@ -2,9 +2,10 @@ import { gql } from 'https://deno.land/x/graphql_tag@0.0.1/mod.ts'
 
 export const typeDefs = gql`
   type Query {
-    hello: String
     allMedia: [Media!]!
     allUsers: [User!]!
+    allReviews: [Review!]!
+    mediaByType(mediaType: String): [Media!]
   }
 
   type Media {
@@ -23,7 +24,17 @@ export const typeDefs = gql`
     _id: ID!
     user_id: ID!
     media_id: ID!
-    review: String!
-    rating: Int!
+    review: String
+    rating: Int
   }
 `
+export type MediaType = {
+  mediaType: string
+}
+
+// use for resultArr in mediaControllers.ts
+export type MediaOutput = {
+  _id: number,
+  type: string,
+  title: string
+}[]
