@@ -25,13 +25,12 @@ mediaController.pullAllMedia = async() => {
     [mediaType]
   );
   const resultArr: any = [];
-  //let resultArr: any;
   tables.rows.forEach((el) => {
     resultArr.push(
       { _id: el[0], type: el[1], title: el[2] }
     );
   });
-  return resultArr.length ? resultArr : null;
+  return resultArr;
 }
 
 // Below is partially done (from last week)

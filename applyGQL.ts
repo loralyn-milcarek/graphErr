@@ -118,6 +118,10 @@ export async function applyGraphQL<T>({
               response.body.errors[i].graphQLSpec = graphErrObj[i].graphQLSpec;
             }
           } else {
+            const arrayTest: any = Object.entries(response.body.data)[0][1];
+            if (arrayTest.length === 0) {
+              response.body.data.graphErr = "Please add a valid argument to your query. If arguments are not required, adjust the schema to make the argument(s) non-nullable.";
+            }
             response.status = 200;
           }
           return;
