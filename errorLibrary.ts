@@ -1,17 +1,16 @@
 export const graphErrLibrary = [
+  // {
+  //   standardError: "Unhandled Error",
+  //   statusCode: 0,
+  //   graphErr: "Unknown",
+  //   graphQLSpec: "Unknown"
+
+  // },
     {
-      standardError: `Cannot query field \"dog\" on type \"Media\".`,
+      standardError: "Cannot query field",
       statusCode: 500,
-      extensionsMessage: "there's no field called dog",
-      specSection: "2. Language",
-      url: "https://spec.graphql.org/draft/#sec-Language"
-    },
-    {
-      standardError: `Cannot query field \"cat\" on type \"Media\".`,
-      statusCode: 400,
-      extensionsMessage: "there's no field called cat",
-      specSection: "2. Language",
-      url: "https://spec.graphql.org/draft/#sec-Language"
+      graphErr: "Internal Server Error. Check your resolvers and query formulations.",
+      graphQLSpec: "5.3.1. Field Selections: https://spec.graphql.org/draft/#sec-Field-Selections"
     },
 
   ];

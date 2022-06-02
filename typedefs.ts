@@ -32,6 +32,10 @@ export type MediaType = {
   mediaType: string
 }
 
+// export type pullMediaByType = {
+//   mediaType: string!
+// }
+
 // use for resultArr in mediaControllers.ts
 export type MediaOutput = {
   _id: number,
