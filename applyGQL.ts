@@ -68,23 +68,27 @@ export async function applyGraphQL<T>({
   type Output = {
     standardError?: string,
     statusCode?: number,
-    extensionsMessage?: string,
-    specSection?: string,
-    url?: string
+    graphErr?: string,
+    graphQLSpec?: string,
   }
 
   type OutputArray = Output[]
 
   const errorHandler = (resBody: any) : Output[] => {
     const output: OutputArray = [];
+    // console.log('res body', resBody.errors[0].message)
     for (let j = 0; j < resBody.errors.length; j++) {
+      // console.log(j);
       for (let i = 0; i < graphErrLibrary.length; i++) {
-        if (graphErrLibrary[i].standardError === resBody.errors[j].message) {
+        // console.log(i);
+        console.log(graphErrLibrary[i].standardError, resBody.errors[j].message);
+        if (resBody.errors[j].message.startsWith(graphErrLibrary[i].standardError)) {
           // possibly change later to return here instead to make more performant
           output.push(graphErrLibrary[i]);
         }
       }
     }
+    // console.log(output);
     return output;
   }
 
@@ -108,9 +112,10 @@ export async function applyGraphQL<T>({
           if (response.body.errors) {
             const graphErrObj: OutputArray = errorHandler(response.body);
             for (let i = 0; i < response.body.errors.length; i++) {
-              response.body.errors[i].extensionsMessage = graphErrObj[i].extensionsMessage;
               // We're not actually changing status behind the scenes
-              response.body.errors[i].status = graphErrObj[i].statusCode;
+              response.body.errors[i].statusCode = graphErrObj[i].statusCode;
+              response.body.errors[i].graphErr = graphErrObj[i].graphErr;
+              response.body.errors[i].graphQLSpec = graphErrObj[i].graphQLSpec;
             }
           } else {
             response.status = 200;
